@@ -2,7 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 // intial set up 
 const app = express();
@@ -32,6 +32,29 @@ async function run() {
         const spinnertech = client.db('spinnertech');
         const projects = spinnertech.collection('projects');
         console.log('database connect')
+
+        // set project to database 
+        app.post('/project', async (req, res) => {
+            const project = req.body;
+            console.log(project);
+            const result = await projects.insertOne(project)
+            res.send({ result: result, status: true })
+        })
+
+        // get project from database 
+        app.get('/project', async (req, res) => {
+            const result = await projects.find({}).toArray()
+            res.send(result)
+        })
+
+        // delete project from database 
+        app.delete('/project/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const result = await projects.deleteOne(filter)
+            res.send({ result: result, status: true })
+
+        })
 
 
     } finally {
