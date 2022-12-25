@@ -53,7 +53,18 @@ async function run() {
             const filter = { _id: ObjectId(id) }
             const result = await projects.deleteOne(filter)
             res.send({ result: result, status: true })
-
+        })
+        // update project from databse 
+        app.put('/project/:id', async (req, res) => {
+            const id = req.params.id;
+            const project = req.body;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: project
+            };
+            const result = await projects.updateOne(filter, updateDoc, options)
+            res.send({ result: result, status: true })
         })
 
 
